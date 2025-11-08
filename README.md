@@ -37,7 +37,7 @@ Table of contents
 
 About
 -----
-This project demonstrates TM and TE modes in an ideal circular waveguide of radius a. The included scripts compute modal cutoff frequencies using Bessel function roots, plot dispersion diagrams, and render simple field patterns in cross-section.
+This project demonstrates TM and TE modes in an ideal circular waveguide of radius a. The included scripts compute modal cutoff frequencies using Bessel function roots, plot dispersion diagrams, and render cross-sectional field patterns for selected modes.
 
 Theory (short)
 --------------
@@ -122,27 +122,153 @@ How the programs work (brief)
 
 Contributing
 ------------
-Contributions, corrections, or requests for additional features (e.g., lossy walls, dielectric-filled waveguides, 3D visualizations) are welcome. Please open an issue describing the change you'd like to propose or submit a pull request with tests and documentation.
+Contributions, corrections, or requests for additional features (e.g., lossy walls, dielectric-filled waveguides, 3D visualizations) are welcome. Please open an issue describing the change you'd like to propose or submit a pull request with suggested code and documentation updates.
 
 License
 -------
 MIT
 
-Acknowledgements and references
--------------------------------
-This project uses scientific Python libraries and standard references for waveguide theory. Below are suggested references and resources useful for learning more or verifying formulas used in the scripts.
+Conclusion
+----------
+This project investigates TM and TE mode propagation in a circular waveguide and provides tools to compute modal roots, cutoff frequencies, dispersion curves, and field cross-sections.
 
-References
-1. Pozar, D. M., Microwave Engineering, 4th ed., John Wiley & Sons, 2011. ISBN: 978-0470631553. A widely used textbook with clear coverage of waveguide modes, cutoff frequencies, and dispersion.
-2. Collin, R. E., Field Theory of Guided Waves, 2nd ed., IEEE Press / Wiley, 1991. A detailed treatment of guided-wave theory and modal analysis in waveguides.
-3. Abramowitz, M. & Stegun, I. A., Handbook of Mathematical Functions, Dover, 1972. (See Bessel functions and zeros). Modern online resource: NIST Digital Library of Mathematical Functions — https://dlmf.nist.gov/ (especially chapter 10 on Bessel functions).
-4. SciPy special functions (Bessel zeros) and documentation — https://docs.scipy.org/doc/scipy/reference/special.html and scipy.special.jn_zeros — https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.jn_zeros.html
-5. NumPy project — https://numpy.org/
-6. SciPy project — https://www.scipy.org/
-7. Matplotlib project — https://matplotlib.org/
+Key takeaways:
+- Modal cutoff frequencies are determined by Bessel function zeros and their derivatives; the radius and material parameters (ε_r, μ_r) set the absolute cutoff values.
+- Below cutoff a mode is evanescent (imaginary beta); above cutoff it propagates (real beta) and its dispersion approaches the light line at high frequency.
+- The scripts included here are intended for teaching, demonstration, and preliminary design — they are easy to extend for lossy walls, dielectric fillings, or more modes.
 
-Notes
-- The above textbooks provide derivations and worked examples for waveguide modes — Pozar is typically more accessible for engineering students, while Collin provides a deeper theoretical foundation.
-- The scripts use SciPy's special function routines to compute Bessel function zeros numerically; the NIST DLMF provides authoritative mathematical reference material for the Bessel functions used here.
+Limitations
+- The model assumes an ideal, perfectly conducting circular waveguide, homogeneous filling (or vacuum), and neglects surface roughness and wall losses.
+- Numerical accuracy of zeros is governed by SciPy routines; for very high-order zeros or extremely tight tolerances, additional checks may be necessary.
+- The interactive examples use a finite frequency window chosen for clarity; adapt the window for your application.
 
-Commit note: Add detailed references and links to README for textbooks and scientific Python libraries.
+Future work
+- Add lossy boundary conditions and conductor models.
+- Support dielectric-filled coaxial or multilayered waveguides.
+- Add 3D time-domain visualizations and exportable animations.
+- Add unit tests and CI to validate numerical outputs across SciPy versions.
+
+Real-time example
+-----------------
+Below is a self-contained interactive example you can save as `scripts/interactive_dispersion.py`. It computes TM/TE cutoff frequencies using SciPy Bessel zeros and provides interactive controls to inspect dispersion (beta/k0) vs frequency for selected modes and radius in real time.
+
+Save this file as scripts/interactive_dispersion.py and run:
+```bash
+python scripts/interactive_dispersion.py
+```
+
+```python
+#!/usr/bin/env python3
+"""
+Interactive dispersion viewer for circular waveguide TM/TE modes.
+
+Saves: scripts/interactive_dispersion.py
+Requires: numpy, scipy, matplotlib
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider, RadioButtons
+from scipy import special
+
+# Physical constants
+c = 299792458.0
+eps0 = 8.8541878128e-12
+mu0 = 4*np.pi*1e-7
+
+# Default parameters
+a0 = 0.02        # radius (m)
+eps_r0 = 1.0
+mu_r0 = 1.0
+
+# Precompute a few Bessel zeros for m=0..3, n=1..6 (adjust as needed)
+max_m = 3
+n_zeros = 6
+jn = {}
+jnp = {}
+for m in range(max_m+1):
+    jn[m] = special.jn_zeros(m, n_zeros)        # zeros of Jm (TM)
+    jnp[m] = special.jnp_zeros(m, n_zeros)      # zeros of Jm' (TE)
+
+def cutoff_freq(mode_type, m, n, a, eps_r=1.0, mu_r=1.0):
+    """Return cutoff frequency (Hz) for given mode_type ('TM' or 'TE'), order m, zero index n (1-based)."""
+    if mode_type == 'TM':
+        x = jn[m][n-1]
+    else:
+        x = jnp[m][n-1]
+    kc = x / a
+    fc = c * kc / (2*np.pi * np.sqrt(eps_r * mu_r))
+    return fc, kc
+
+def dispersion_vs_freq(mode_type, m, n, a, f_array, eps_r=1.0, mu_r=1.0):
+    """Compute beta/k0 (normalized propagation constant) vs frequency array."""
+    fc, kc = cutoff_freq(mode_type, m, n, a, eps_r, mu_r)
+    omega = 2*np.pi*f_array
+    k0 = 2*np.pi*f_array / c * np.sqrt(eps_r * mu_r)
+    beta = np.sqrt(np.maximum(0.0, k0**2 - kc**2))  # real part for propagating
+    # for evanescent frequencies (k0<kc) show imaginary beta as negative imaginary magnitude
+    evanescent = k0 < kc
+    beta_norm = np.where(evanescent, -np.sqrt(kc**2 - k0**2)/k0, beta/k0)
+    return beta_norm, fc
+
+# Frequency sweep
+fmin = 0.01e9
+fmax = 20e9
+f = np.linspace(fmin, fmax, 800)
+
+# Initial plot parameters
+mode_type = 'TM'
+m_init = 0
+n_init = 1
+a = a0
+
+beta_norm, fc_init = dispersion_vs_freq(mode_type, m_init, n_init, a, f, eps_r0, mu_r0)
+
+fig, ax = plt.subplots(figsize=(8,5))
+plt.subplots_adjust(left=0.15, bottom=0.28)
+line, = ax.plot(f/1e9, beta_norm, lw=2)
+ax.axvline(fc_init/1e9, color='gray', linestyle='--', label='cutoff')
+ax.set_xlabel('Frequency (GHz)')
+ax.set_ylabel('Normalized beta (beta/k0); negative => evanescent')
+ax.set_title(f'{mode_type}{m_init}{n_init} dispersion (a={a:.3f} m)')
+ax.grid(True)
+ax.set_ylim(-1.2, 1.2)
+ax.legend()
+
+# Slider: radius
+ax_a = plt.axes([0.15, 0.16, 0.7, 0.03])
+slider_a = Slider(ax_a, 'Radius (m)', 0.005, 0.1, valinit=a0, valstep=0.001)
+
+# Radio buttons: TM/TE
+ax_rt = plt.axes([0.02, 0.5, 0.1, 0.15])
+radio_mode = RadioButtons(ax_rt, ('TM', 'TE'), active=0)
+
+# Slider: m
+ax_m = plt.axes([0.15, 0.10, 0.3, 0.03])
+slider_m = Slider(ax_m, 'm', 0, max_m, valinit=m_init, valstep=1)
+
+# Slider: n
+ax_n = plt.axes([0.55, 0.10, 0.3, 0.03])
+slider_n = Slider(ax_n, 'n (1-based)', 1, n_zeros, valinit=n_init, valstep=1)
+
+def update(val=None):
+    mode = radio_mode.value_selected
+    m_val = int(slider_m.val)
+    n_val = int(slider_n.val)
+    a_val = slider_a.val
+    beta_norm, fc = dispersion_vs_freq(mode, m_val, n_val, a_val, f, eps_r0, mu_r0)
+    line.set_ydata(beta_norm)
+    ax.set_title(f'{mode}{m_val}{n_val} dispersion (a={a_val:.3f} m)')
+    # update cutoff line
+    # remove previous verticals and re-add
+    [ln.remove() for ln in ax.lines[1:]]  # keep the main plot (index 0)
+    ax.axvline(fc/1e9, color='gray', linestyle='--', label=f'cutoff = {fc/1e9:.3f} GHz')
+    ax.relim()
+    ax.autoscale_view()
+    fig.canvas.draw_idle()
+
+slider_a.on_changed(update)
+slider_m.on_changed(update)
+slider_n.on_changed(update)
+radio_mode.on_clicked(update)
+
+plt.show()
