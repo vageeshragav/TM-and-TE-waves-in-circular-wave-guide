@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="-1 -1 2 2">
+  <defs>
+    <radialGradient id="rg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cce5ff"/>
+    </radialGradient>
+  </defs>
+  <rect x="-1" y="-1" width="2" height="2" fill="#f8f9fb" />
+  <!-- circular waveguide boundary -->
+  <circle cx="0" cy="0" r="0.95" fill="url(#rg)" stroke="#222" stroke-width="0.01"/>
+  <!-- approximate Ez pattern for TM01: concentric positive/negative rings -->
+  <g transform="scale(0.9)">
+    <circle cx="0" cy="0" r="0.20" fill="#ff6b6b" opacity="0.95"/>
+    <circle cx="0" cy="0" r="0.45" fill="#ffffff" opacity="1"/>
+    <circle cx="0" cy="0" r="0.70" fill="#4dabf7" opacity="0.9"/>
+  </g>
+  <!-- center marker and label -->
+  <circle cx="0" cy="0" r="0.01" fill="#222"/>
+  <text x="-0.95" y="0.9" font-family="Arial" font-size="0.06" fill="#222">Ez (TM01) — normalized</text>
+</svg>
