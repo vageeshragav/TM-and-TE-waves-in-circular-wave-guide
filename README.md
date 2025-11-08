@@ -37,7 +37,7 @@ Table of contents
 
 About
 -----
-This project demonstrates TM and TE modes in an ideal circular waveguide of radius a. The included scripts compute modal cutoff frequencies using Bessel function roots, plot dispersion diagrams, and render 2D cross-sectional field patterns (Ez for TM, Hz for TE). The outputs are suitable for teaching, reports, and basic validation of waveguide behavior.
+This project demonstrates TM and TE modes in an ideal circular waveguide of radius a. The included scripts compute modal cutoff frequencies using Bessel function roots, plot dispersion diagrams, and render simple field patterns in cross-section.
 
 Theory (short)
 --------------
@@ -122,7 +122,7 @@ How the programs work (brief)
 
 Contributing
 ------------
-Contributions, corrections, or requests for additional features (e.g., lossy walls, dielectric-filled waveguides, 3D visualizations) are welcome. Please open an issue describing the change you'd like to contribute, or submit a pull request.
+Contributions, corrections, or requests for additional features (e.g., lossy walls, dielectric-filled waveguides, 3D visualizations) are welcome. Please open an issue describing the change you'd like to propose or submit a pull request with tests and documentation.
 
 License
 -------
@@ -130,12 +130,19 @@ MIT
 
 Acknowledgements and references
 -------------------------------
-- Standard microwave textbooks on waveguides (Collin, Pozar)
-- SciPy and Matplotlib for numerical computations and plotting
+This project uses scientific Python libraries and standard references for waveguide theory. Below are suggested references and resources useful for learning more or verifying formulas used in the scripts.
+
+References
+1. Pozar, D. M., Microwave Engineering, 4th ed., John Wiley & Sons, 2011. ISBN: 978-0470631553. A widely used textbook with clear coverage of waveguide modes, cutoff frequencies, and dispersion.
+2. Collin, R. E., Field Theory of Guided Waves, 2nd ed., IEEE Press / Wiley, 1991. A detailed treatment of guided-wave theory and modal analysis in waveguides.
+3. Abramowitz, M. & Stegun, I. A., Handbook of Mathematical Functions, Dover, 1972. (See Bessel functions and zeros). Modern online resource: NIST Digital Library of Mathematical Functions — https://dlmf.nist.gov/ (especially chapter 10 on Bessel functions).
+4. SciPy special functions (Bessel zeros) and documentation — https://docs.scipy.org/doc/scipy/reference/special.html and scipy.special.jn_zeros — https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.jn_zeros.html
+5. NumPy project — https://numpy.org/
+6. SciPy project — https://www.scipy.org/
+7. Matplotlib project — https://matplotlib.org/
 
 Notes
------
-- The field pattern scripts produce idealized scalar field plots (Ez or Hz) and are intended for illustration. They are not a full vector-field finite-element solver.
-- When plotting TE modes the script displays the axial magnetic field (Hz) amplitude; for TM modes it displays Ez.
+- The above textbooks provide derivations and worked examples for waveguide modes — Pozar is typically more accessible for engineering students, while Collin provides a deeper theoretical foundation.
+- The scripts use SciPy's special function routines to compute Bessel function zeros numerically; the NIST DLMF provides authoritative mathematical reference material for the Bessel functions used here.
 
-Commit note: Embed sample SVG images in README and add TE11 & dispersion SVGs
+Commit note: Add detailed references and links to README for textbooks and scientific Python libraries.
