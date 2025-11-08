@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="30" y="40" font-family="Arial" font-size="20" fill="#222">Dispersion diagram (schematic)</text>
+  <!-- axes -->
+  <line x1="70" y1="520" x2="830" y2="520" stroke="#333" stroke-width="2"/>
+  <line x1="70" y1="520" x2="70" y2="80" stroke="#333" stroke-width="2"/>
+  <text x="830" y="540" font-family="Arial" font-size="14">Frequency (GHz)</text>
+  <text x="30" y="80" font-family="Arial" font-size="14" transform="rotate(-90 30,80)">Normalized β</text>
+  <!-- sample curves -->
+  <path d="M 90 480 C 200 380 300 300 420 260 C 520 230 640 220 740 210" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+  <path d="M 90 520 C 220 440 340 360 460 320 C 580 290 700 280 780 275" fill="none" stroke="#4dabf7" stroke-width="3"/>
+  <path d="M 90 520 C 160 500 240 460 320 420 C 420 380 540 340 680 320" fill="none" stroke="#2f855a" stroke-width="3" stroke-dasharray="6 4"/>
+  <!-- cutoff markers -->
+  <line x1="300" y1="520" x2="300" y2="80" stroke="#999" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="300" y="545" font-family="Arial" font-size="12" fill="#666">fc(TM01)</text>
+  <line x1="420" y1="520" x2="420" y2="80" stroke="#999" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="420" y="545" font-family="Arial" font-size="12" fill="#666">fc(TE11)</text>
+  <!-- legend -->
+  <rect x="620" y="90" width="240" height="80" fill="#fcfcfc" stroke="#ddd"/>
+  <circle cx="640" cy="120" r="6" fill="#ff6b6b"/>
+  <text x="660" y="125" font-family="Arial" font-size="12">TM01</text>
+  <circle cx="640" cy="150" r="6" fill="#4dabf7"/>
+  <text x="660" y="155" font-family="Arial" font-size="12">TE11</text>
+  <circle cx="640" cy="180" r="6" fill="#2f855a"/>
+  <text x="660" y="185" font-family="Arial" font-size="12">Higher order</text>
+</svg>
